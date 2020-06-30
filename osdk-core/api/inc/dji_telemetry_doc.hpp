@@ -192,7 +192,7 @@ using namespace DJI::OSDK::Telemetry;
  */
 
 /*!
- * @var TOPIC_HEIGHT_HOMEPOINT
+ * @var TOPIC_ALTITUDE_OF_HOMEPOINT
  * @brief Provides the altitude from sea level when the aircraft last took off.
  * @details
  * This is a fusion output from the flight control system, and also uses the ICAO model.
@@ -264,7 +264,6 @@ using namespace DJI::OSDK::Telemetry;
  * @details Format : yyyymmdd
  * @sensors GPS
  * @platforms A3,N3,M600,M210
- * @units -
  * @datastruct \ref uint32_t
  */
 
@@ -273,7 +272,6 @@ using namespace DJI::OSDK::Telemetry;
  * @details Format : hhmmss
  * @sensors GPS
  * @platforms A3,N3,M600,M210
- * @units -
  * @datastruct \ref uint32_t
  */
 
@@ -514,6 +512,9 @@ using namespace DJI::OSDK::Telemetry;
  * @details Please be aware that some of the data elements in this topic may not be able to update
  * at high rates due to the limitations of the sensing for that data. e.g. current can only update @ 1 Hz.
  * @platforms A3,N3, M600,M210
+ * @units
+ * |voltage           | mV |
+ * |current           | mA |
  * @datastruct \ref Battery
  */
 
@@ -684,7 +685,7 @@ using namespace DJI::OSDK::Telemetry;
  * sources of data, the quality of this topic will reduce significantly. VO data quality will reduce if you are too high
  * above the ground. Make sure that the Vision Positioning System is enabled in DJI Go 4 before using this topic
  * (by default it is enabled).
- * @sensors IMU, VO, GPS(if available), compass
+ * @sensors IMU, VO, GPS(if available), RTK (if available), ultrasonic, magnetometer, barometer
  * @platforms A3,N3,M210
  * @units m
  * @datastruct \ref LocalPositionVO

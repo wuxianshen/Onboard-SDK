@@ -34,8 +34,17 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::getVersion[] = {
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::activate[] = {
   OpenProtocolCMD::CMDSet::activation, 0x01
 };
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::dataBury[] = {
+  OpenProtocolCMD::CMDSet::activation, 0x03
+};
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::frequency[] = {
   OpenProtocolCMD::CMDSet::activation, 0x10
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::toPayload[] = {
+  OpenProtocolCMD::CMDSet::activation, 0xFB
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::heatBeatCmd[] = {
+        OpenProtocolCMD::CMDSet::activation, 0xFC
 };
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Activation::toMobile[] = {
   OpenProtocolCMD::CMDSet::activation, 0xFE
@@ -58,6 +67,12 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Broadcast::waypoint[] = {
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Broadcast::subscribe[] = {
   OpenProtocolCMD::CMDSet::broadcast, 0x05
 };
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Broadcast::fromPayload[] = {
+  OpenProtocolCMD::CMDSet::broadcast, 0x06
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Broadcast::psdkWidgetValue[] = {
+    OpenProtocolCMD::CMDSet::broadcast, 0x07
+};
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Broadcast::test[] = {
   OpenProtocolCMD::CMDSet::broadcast, 0xEF
 };
@@ -73,11 +88,17 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::status[] = {
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::control[] = {
   OpenProtocolCMD::CMDSet::control, 0x03
 };
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::emergencyBrake[] = {
+  OpenProtocolCMD::CMDSet::control, 0x04
+};
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::setArm[] = {
   OpenProtocolCMD::CMDSet::control, 0x05
 };
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::killSwitch[] = {
   OpenProtocolCMD::CMDSet::control, 0x06
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::setHomeLocation[] = {
+  OpenProtocolCMD::CMDSet::control, 0x07
 };
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::cameraShot[] = {
   OpenProtocolCMD::CMDSet::control, 0x20
@@ -93,29 +114,39 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::gimbalSpeed[] = {
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::gimbalAngle[] = {
   OpenProtocolCMD::CMDSet::control, 0x1B
 };
-const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointInit[] = {
-  OpenProtocolCMD::CMDSet::mission, 0x10
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::extendedFunction[] = {
+  OpenProtocolCMD::CMDSet::control, 0x30
 };
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::parameterRead[] = {
+  OpenProtocolCMD::CMDSet::control, 0x41
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Control::parameterWrite[] = {
+  OpenProtocolCMD::CMDSet::control, 0x42
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointInit[] = {
+  OpenProtocolCMD::CMDSet::mission, 0x10 };
+
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointAddPoint[] =
   { OpenProtocolCMD::CMDSet::mission, 0x11 };
+
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointSetStart[] =
   { OpenProtocolCMD::CMDSet::mission, 0x12 };
+
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointSetPause[] =
   { OpenProtocolCMD::CMDSet::mission, 0x13 };
+
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointDownload[] =
   { OpenProtocolCMD::CMDSet::mission, 0x14 };
-const uint8_t
-  DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload[] = {
-    OpenProtocolCMD::CMDSet::mission, 0x15
-  };
-const uint8_t
-  DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity[] = {
-    OpenProtocolCMD::CMDSet::mission, 0x16
-  };
-const uint8_t
-  DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity[] = {
-    OpenProtocolCMD::CMDSet::mission, 0x17
-  };
+
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload[] =
+  { OpenProtocolCMD::CMDSet::mission, 0x15 };
+
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity[] =
+  { OpenProtocolCMD::CMDSet::mission, 0x16 };
+
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity[] =
+  { OpenProtocolCMD::CMDSet::mission, 0x17 };
+
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::hotpointStart[] = {
   OpenProtocolCMD::CMDSet::mission, 0x20
 };
@@ -149,6 +180,27 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Mission::followTarget[] = {
 };
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::broadcast[] = {
   OpenProtocolCMD::CMDSet::hardwareSync, 0x00
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsNMEAGPSGSA[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x01
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsNMEAGPSRMC[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x02
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsNMEARTKGSA[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x03
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsNMEARTKRMC[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x04
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsUTCTime[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x05
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsUTCFCTimeRef[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x06
+};
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::HardwareSync::ppsSource[] = {
+  OpenProtocolCMD::CMDSet::hardwareSync, 0x07
 };
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::VirtualRC::settings[] = {
   OpenProtocolCMD::CMDSet::virtualRC
@@ -187,3 +239,8 @@ const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Subscribe::pauseResume[] = {
 const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Subscribe::getConfig[] = {
   OpenProtocolCMD::CMDSet::subscribe, 0x06
 };
+const uint8_t DJI::OSDK::OpenProtocolCMD::CMDSet::Intelligent::setAvoidObstacle[] = {
+  OpenProtocolCMD::CMDSet::intelligent, 0x01
+};
+
+

@@ -1,10 +1,10 @@
 /** @file dji_waypoint.hpp
- *  @version 3.3
- *  @date April 2017
+ *  @version 3.8
+ *  @date April 2019
  *
  *  @brief Implementation of GPS Waypoint Missions for DJI OSDK
  *
- *  @Copyright (c) 2016-2017 DJI
+ *  @Copyright (c) 2016-2019 DJI
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@ class WaypointMission : public MissionBase
 public:
   WaypointMission(Vehicle* vehicle = 0);
   ~WaypointMission();
+
+  const double RAD_2_DEGREE = 57.2957795;
 
   VehicleCallBackHandler wayPointEventCallback;
   VehicleCallBackHandler wayPointCallback;
@@ -279,9 +281,11 @@ public:
    */
   void setWaypointCallback(VehicleCallBack callback, UserData userData);
 
+
 private:
   WayPointInitSettings info;
   WayPointSettings*    index;
+
 };
 
 } // namespace OSDK
