@@ -58,28 +58,27 @@ WaypointMission::init(WayPointInitSettings* Info, VehicleCallBack callback,
   if (Info)
     setInfo(*Info);
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&MissionManager::missionCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = MissionManager::missionCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(2, vehicle->getEncryption(),
-                               OpenProtocolCMD::CMDSet::Mission::waypointInit,
-                               &info, sizeof(info), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointInit,
+      &info, sizeof(info), 500, 2, cb, udata);
 }
 
 ACK::ErrorCode
 WaypointMission::init(WayPointInitSettings* Info, int timeout)
 {
-
   ACK::ErrorCode ack;
 
   if (Info)
@@ -87,14 +86,10 @@ WaypointMission::init(WayPointInitSettings* Info, int timeout)
     setInfo(*Info);
   }
 
-  vehicle->protocolLayer->send(2, vehicle->getEncryption(),
-                               OpenProtocolCMD::CMDSet::Mission::waypointInit,
-                               &info, sizeof(info), 500, 2, false, 2);
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointInit, &info, sizeof(info),
+      timeout * 1000 / 2, 2);
 
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointInit, timeout));
-
-  return ack;
 }
 
 void
@@ -102,22 +97,22 @@ WaypointMission::start(VehicleCallBack callback, UserData userData)
 {
   uint8_t start = 0;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&MissionManager::missionCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = MissionManager::missionCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &start,
-    sizeof(start), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &start, sizeof(start),
+      500, 2, cb, udata);
 }
 
 ACK::ErrorCode
@@ -126,14 +121,9 @@ WaypointMission::start(int timeout)
   ACK::ErrorCode ack;
   uint8_t        start = 0;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &start,
-    sizeof(start), 500, 2, false, 2);
-
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointSetStart, timeout));
-
-  return ack;
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &start, sizeof(start),
+      timeout * 1000 / 2, 2);
 }
 
 void
@@ -141,22 +131,22 @@ WaypointMission::stop(VehicleCallBack callback, UserData userData)
 {
   uint8_t stop = 1;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&MissionManager::missionCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = MissionManager::missionCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &stop,
-    sizeof(stop), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &stop, sizeof(stop),
+      500, 2, cb, udata);
 }
 
 ACK::ErrorCode
@@ -165,14 +155,9 @@ WaypointMission::stop(int timeout)
   ACK::ErrorCode ack;
   uint8_t        stop = 1;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &stop,
-    sizeof(stop), 500, 2, false, 2);
-
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointSetStart, timeout));
-
-  return ack;
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetStart, &stop, sizeof(stop),
+      timeout * 1000 / 2, 2);
 }
 
 void
@@ -180,22 +165,22 @@ WaypointMission::pause(VehicleCallBack callback, UserData userData)
 {
   uint8_t data = 0;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&MissionManager::missionCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = MissionManager::missionCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data,
-    sizeof(data), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data, sizeof(data),
+      500, 2, cb, udata);
 }
 
 ACK::ErrorCode
@@ -204,14 +189,9 @@ WaypointMission::pause(int timeout)
   ACK::ErrorCode ack;
   uint8_t        data = 0;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data,
-    sizeof(data), 500, 2, false, 2);
-
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointSetPause, timeout));
-
-  return ack;
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data, sizeof(data),
+      timeout * 1000 / 2, 2);
 }
 
 void
@@ -219,22 +199,22 @@ WaypointMission::resume(VehicleCallBack callback, UserData userData)
 {
   uint8_t data = 1;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&MissionManager::missionCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = MissionManager::missionCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data,
-    sizeof(data), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data, sizeof(data),
+      500, 2, cb, udata);
 }
 
 ACK::ErrorCode
@@ -243,14 +223,9 @@ WaypointMission::resume(int timeout)
   ACK::ErrorCode ack;
   uint8_t        data = 1;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data,
-    sizeof(data), 500, 2, false, 2);
-
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointSetPause, timeout));
-
-  return ack;
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetPause, &data, sizeof(data),
+      timeout * 1000 / 2, 2);
 }
 
 ACK::WayPointInit
@@ -259,14 +234,9 @@ WaypointMission::getWaypointSettings(int timer)
   ACK::WayPointInit ack;
   uint8_t           arbNumber = 0;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointDownload, &arbNumber,
-    sizeof(arbNumber), 1000, 4, 0, 0);
-
-  ack = *((ACK::WayPointInit*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointDownload, timer));
-
-  return ack;
+  return *(ACK::WayPointInit *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointDownload, &arbNumber,
+      sizeof(arbNumber), timer * 1000 / 4, 4);
 }
 
 void
@@ -275,21 +245,22 @@ WaypointMission::getWaypointSettings(VehicleCallBack callback,
 {
   uint8_t arbNumber = 0;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)getWaypointSettingsCallback;
-    vehicle->nbUserData[cbIndex]          = NULL;
+    cb = getWaypointSettingsCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointDownload, &arbNumber,
-    sizeof(arbNumber), 1000, 4, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointDownload, &arbNumber,
+      sizeof(arbNumber), 1000, 4, cb, udata);
 }
 
 void
@@ -326,35 +297,31 @@ WaypointMission::getIndex(uint8_t index, int timer)
 {
   ACK::WayPointIndex ack;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload, &index,
-    sizeof(index), 1000, 4, 0, 0);
-
-  ack = *((ACK::WayPointIndex*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload, timer));
-
-  return ack;
+  return *(ACK::WayPointIndex *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload, &index,
+      sizeof(index), timer * 1000 / 4, 4);
 }
 
 void
 WaypointMission::getIndex(uint8_t index, VehicleCallBack callback,
                           UserData userData)
 {
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)getIndexCallback;
-    vehicle->nbUserData[cbIndex]          = NULL;
+    cb = getIndexCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload, &index,
-    sizeof(index), 1000, 4, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointIndexDownload, &index,
+      sizeof(index), 1000, 4, cb, udata);
 }
 
 void
@@ -443,17 +410,17 @@ WaypointMission::uploadIndexData(WayPointSettings* data,
 {
   setIndex(data, data->index);
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&WaypointMission::uploadIndexDataCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = WaypointMission::uploadIndexDataCallback;
+    udata = NULL;
   }
 
   WayPointSettings send;
@@ -462,9 +429,9 @@ WaypointMission::uploadIndexData(WayPointSettings* data,
   else
     return false; //! @note range error
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointAddPoint, &send,
-    sizeof(send), 1000, 4, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointAddPoint, &send, sizeof(send),
+      1000, 4, cb, udata);
 
   return true;
 }
@@ -487,14 +454,9 @@ WaypointMission::uploadIndexData(WayPointSettings* data, int timeout)
     DERROR("Range error\n");
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointAddPoint, &wpData,
-    sizeof(wpData), 1000, 4, false, 2);
-
-  ack = *((ACK::WayPointIndex*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointAddPoint, timeout));
-
-  return ack;
+  return *(ACK::WayPointIndex *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointAddPoint, &wpData,
+      sizeof(wpData), timeout * 1000 / 4, 4);
 }
 
 void
@@ -502,22 +464,22 @@ WaypointMission::readIdleVelocity(VehicleCallBack callback, UserData userData)
 {
   uint8_t zero = 0;
 
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&WaypointMission::idleVelocityCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = WaypointMission::idleVelocityCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity, &zero,
-    sizeof(zero), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity, &zero,
+      sizeof(zero), 500, 2, cb, udata);
 }
 
 ACK::ErrorCode
@@ -526,36 +488,31 @@ WaypointMission::readIdleVelocity(int timeout)
   ACK::ErrorCode ack;
   uint8_t        zero = 0;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity, &zero,
-    sizeof(zero), 500, 2, false, 0);
-
-  ack = *((ACK::ErrorCode*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity, timeout));
-
-  return ack;
+  return *(ACK::ErrorCode *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointGetVelocity, &zero,
+      sizeof(zero), timeout * 1000 / 2, 2);
 }
 
 void
 WaypointMission::updateIdleVelocity(float32_t       meterPreSecond,
                                     VehicleCallBack callback, UserData userData)
 {
-  int cbIndex = vehicle->callbackIdIndex();
+  VehicleCallBack cb = NULL;
+  UserData udata = NULL;
   if (callback)
   {
-    vehicle->nbCallbackFunctions[cbIndex] = (void*)callback;
-    vehicle->nbUserData[cbIndex]          = userData;
+    cb = callback;
+    udata = userData;
   }
   else
   {
-    vehicle->nbCallbackFunctions[cbIndex] =
-      (void*)&WaypointMission::idleVelocityCallback;
-    vehicle->nbUserData[cbIndex] = NULL;
+    cb = WaypointMission::idleVelocityCallback;
+    udata = NULL;
   }
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity,
-    &meterPreSecond, sizeof(meterPreSecond), 500, 2, true, cbIndex);
+  vehicle->legacyLinker->sendAsync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity, &meterPreSecond,
+      sizeof(meterPreSecond), 500, 2, cb, udata);
 }
 
 ACK::WayPointVelocity
@@ -563,14 +520,9 @@ WaypointMission::updateIdleVelocity(float32_t meterPreSecond, int timeout)
 {
   ACK::WayPointVelocity ack;
 
-  vehicle->protocolLayer->send(
-    2, vehicle->getEncryption(), OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity,
-    &meterPreSecond, sizeof(meterPreSecond), 500, 2, false, 0);
-
-  ack = *((ACK::WayPointVelocity*)vehicle->waitForACK(
-    OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity, timeout));
-
-  return ack;
+  return *(ACK::WayPointVelocity *) vehicle->legacyLinker->sendSync(
+      OpenProtocolCMD::CMDSet::Mission::waypointSetVelocity, &meterPreSecond,
+      sizeof(meterPreSecond), timeout * 1000 / 2, 2);
 }
 
 void
@@ -644,7 +596,6 @@ void
 WaypointMission::setWaypointCallback(VehicleCallBack callback,
                                      UserData        userData)
 {
-  vehicle->wayPointData = true;
   wayPointCallback.callback = callback;
   wayPointCallback.userData = userData;
 }

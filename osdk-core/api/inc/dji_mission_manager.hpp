@@ -33,6 +33,7 @@
 
 #include "dji_hotpoint.hpp"
 #include "dji_waypoint.hpp"
+#include <vector>
 
 namespace DJI
 {
@@ -41,8 +42,8 @@ namespace OSDK
 
 enum DJI_MISSION_TYPE
 {
-  WAYPOINT = 0,
-  HOTPOINT = 1,
+  WAYPOINT   = 0,
+  HOTPOINT   = 1,
 };
 
 enum MISSION_ACTION
@@ -55,7 +56,6 @@ enum MISSION_ACTION
 
 class WaypointMission;
 class HotpointMission;
-
 /*! @brief MissionManager class for chaining/managing missions
  *
  */
@@ -112,6 +112,8 @@ private:
    *  @param wayptData initData for the waypt (void ptr)
    */
   void initWayptMission(VehicleCallBack callback = 0, UserData wayptData = 0);
+
+
   /*! @brief
    *
    *  init hot pt mission, blocking calls
@@ -151,21 +153,13 @@ public:
    */
   void printInfo();
 
+
   Vehicle*         vehicle;
   WaypointMission* wpMission;
   HotpointMission* hpMission;
 
-  //! counter to keep track of the amount of mission (protection mechanism in
-  //! get_Pt())
-  int wayptCounter;
-  int hotptCounter;
-
-private:
-  //! @note no dynamic container, so fix the size of the mission container
-  static const int MAX_MISSION_SIZE = 5;
-
-  WaypointMission* wpMissionArray[MAX_MISSION_SIZE];
-  HotpointMission* hpMissionArray[MAX_MISSION_SIZE];
+  std::vector<WaypointMission*> wpMissionVector;
+  std::vector<HotpointMission*> hpMissionVector;
 };
 
 } // OSDK
