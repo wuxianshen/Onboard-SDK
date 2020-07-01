@@ -54,7 +54,7 @@ Log::Log(Mutex* m)
   this->enable_error = true;
 
   //call this function by main work flows
-  //prepareLogFile(1);
+  prepareLogFile(1);
 }
 
 Log::~Log()
@@ -75,7 +75,6 @@ Log::title(int level, const char* prefix, const char* func, int line)
   {
     vaild = true;
 
-    /*
     time_t now = time(0);
     tm *ltm = localtime(&now);
     std::ostringstream sstr;
@@ -83,15 +82,15 @@ Log::title(int level, const char* prefix, const char* func, int line)
     sstr << ltm->tm_min << "_";
     sstr << ltm->tm_sec;
 
-    const char str[] = "\n%s : %s/%d @ %s, L%d: ";
-    print(str, sstr.str().c_str(), prefix, level, func, line);
-     */
-    mutex->lock();
+    //const char str[] = "\n%s : %s/%d @ %s, L%d: ";
+    //print(str, sstr.str().c_str(), prefix, level, func, line);
+
+    //mutex->lock();
     uint32_t timeMs = 0;
     OsdkOsal_GetTimeMs(&timeMs);
+    //mutex->unlock();
     //printf("[%d.%03d]%s/%d @ %s, L%d: ", timeMs / 1000, timeMs % 1000, prefix, level, func, line);
-    print("[%d.%03d]%s/%d @ %s, L%d: ", timeMs / 1000, timeMs % 1000, prefix, level, func, line);
-    mutex->unlock();
+    print("[%s %d.%03d]%s/%d::", sstr.str().c_str(), timeMs / 1000, timeMs % 1000, prefix, level);
   }
   else
   {
@@ -145,8 +144,8 @@ Log::print(const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     mutex->lock();
-
     vsnprintf(log, sizeof(log) - 1, fmt, args);
+    va_end(args);
 
     //Write log to file;
     static unsigned log_cnt = 0;
@@ -161,14 +160,20 @@ Log::print(const char* fmt, ...)
       }
     }
 
-    mutex->unlock();
-
-    va_end(args);
-    if(log[strlen(log)] != '\n') {
-      printf("%s\n", log);
-    } else {
+    if(log[strlen(log)-1]  == ':' &&
+       log[strlen(log)-2]  == ':')
+    {
       printf("%s", log);
-    };
+    }
+    else
+    {
+      if(log[strlen(log)] != '\n') {
+        printf("%s\n", log);
+      } else {
+        printf("%s", log);
+      };
+    }
+
     mutex->unlock();
 #if defined(__linux__)
     fflush(stdout);
@@ -354,13 +359,20 @@ Log::disableErrorLogging()
 void
 Log::prepareLogFile(unsigned int flush_time)
 {
+  static bool log_file_init = false;
+  if ( log_file_init )
+  {
+    return;
+  }
+  log_file_init = true;
+
   //Create log file to save dji log msg
   //1.Get current date and time
 
   time_t now = time(0);
   tm *ltm = localtime(&now);
   std::ostringstream sstr;
-  sstr << "log/dji_log/";
+  //sstr << "log/dji_log/";
   sstr << 1900 + ltm->tm_year; sstr << "_";
   sstr << 1 + ltm->tm_mon; sstr << "_";
   sstr << ltm->tm_mday; sstr << "_";
@@ -371,16 +383,16 @@ Log::prepareLogFile(unsigned int flush_time)
 
   log_file.open(sstr.str().c_str(), std::ios::binary | std::ios::out);
 
-  /*
+  ///*
   if ( log_file.is_open() )
   {
-    std::cout << "log file create success" << std::endl;
+    std::cout << "log file " << sstr.str().c_str() << " create success" << std::endl;
   }
   else
   {
     std::cout << "log file " << sstr.str().c_str() << " create failed" << std::endl;
   }
-  */
+  //*/
   log_flush_time = flush_time;
 }
 

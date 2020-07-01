@@ -63,7 +63,7 @@ void april_tag_process(CameraRGBImage main_img)
 {
   // One processing for every 100
   static int count = 0;
-  if (count < 100)
+  if (count < 50)
   {
     count++;
     return;
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 
   CameraRGBImage mainImg;
   char mainName[] = "MAIN_CAM";
-  for(int i=0; i<10000; i++)
+  for(int i=0; i<100000; i++)
   {
     if(mainCamResult && vehicle->advancedSensing->newMainCameraImageReady())
     {
