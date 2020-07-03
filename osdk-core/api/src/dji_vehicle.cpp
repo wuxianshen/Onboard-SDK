@@ -613,6 +613,13 @@ Vehicle::initGimbal()
     return true;
   }
 
+  ACK::ErrorCode ack = this->subscribe->verify(wait_timeout);
+  if (ACK::getError(ack))
+  {
+    DERROR("Failed to verify subscription!\n");
+    return false;
+  }
+
   this->gimbal = new (std::nothrow) Gimbal(this);
   if (this->gimbal == 0)
   {
