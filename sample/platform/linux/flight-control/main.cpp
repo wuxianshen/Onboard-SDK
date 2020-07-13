@@ -32,8 +32,10 @@
 
 /*TODO:flight_control_sample will by replace by flight_sample in the future*/
 #include "flight_control_sample.hpp"
-#include "flight_sample.hpp"
 #include "dji_linux_helpers.hpp"
+#include "flight_sample.hpp"
+
+#include <unistd.h>
 
 using namespace DJI::OSDK;
 using namespace DJI::OSDK::Telemetry;
@@ -74,6 +76,7 @@ int main(int argc, char** argv) {
   switch (inputChar) {
     case 'a':
       monitoredTakeoff(vehicle);
+      sleep(20);
       monitoredLanding(vehicle);
       break;
     case 'b':
@@ -118,6 +121,12 @@ int main(int argc, char** argv) {
 
       vehicle->flightController->setCollisionAvoidanceEnabledSync(
         FlightController::AvoidEnable::AVOID_ENABLE, 1);
+      break;
+    case 'd':
+      monitoredTakeoff(vehicle);
+      sleep(5);
+      landByConfirmation(vehicle);
+      flightSample->ConfirmLanding(1);
       break;
     default:
       break;

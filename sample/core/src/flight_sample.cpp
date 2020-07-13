@@ -278,6 +278,85 @@ bool FlightSample::goHomeAndConfirmLanding(int timeout) {
   return true;
 }
 
+bool FlightSample::ConfirmLanding(int timeout) {
+  /*! Step 1: Verify and setup the subscription */
+  const int pkgIndex = 0;
+  int freq = 10;
+  TopicName topicList[] = {TOPIC_STATUS_FLIGHT, TOPIC_STATUS_DISPLAYMODE,
+                           TOPIC_AVOID_DATA, TOPIC_VELOCITY};
+  int topicSize = sizeof(topicList) / sizeof(topicList[0]);
+  setUpSubscription(pkgIndex, freq, topicList, topicSize, timeout);
+
+  /*! Step 3: Start landing */
+  char func[50];
+  ACK::ErrorCode landingStatus = vehicle->control->land(timeout);
+  if (ACK::getError(landingStatus) != ACK::SUCCESS)
+  {
+    ACK::getErrorCodeMessage(landingStatus, func);
+    return false;
+  }
+
+  DSTATUS("Start landing action");
+  if (!checkActionStarted(VehicleStatus::DisplayMode::MODE_AUTO_LANDING)) {
+    DERROR("Fail to execute Landing action!");
+    return false;
+  } else {
+    while (vehicle->subscribe->getValue<TOPIC_STATUS_DISPLAYMODE>() ==
+               VehicleStatus::DisplayMode::MODE_AUTO_LANDING &&
+           vehicle->subscribe->getValue<TOPIC_STATUS_FLIGHT>() ==
+               VehicleStatus::FlightStatus::IN_AIR) {
+      Telemetry::TypeMap<TOPIC_AVOID_DATA>::type avoidData =
+          vehicle->subscribe->getValue<TOPIC_AVOID_DATA>();
+      Platform::instance().taskSleepMs(1000);
+      if ((0.65 < avoidData.down && avoidData.down < 0.75) &&
+          (avoidData.downHealth == 1)) {
+        break;
+      }
+    }
+  }
+  DSTATUS("Finished landing action");
+
+  /*! Step 4: Confirm Landing */
+  DSTATUS("Start confirm Landing and avoid ground action");
+  ErrorCode::ErrorCodeType forceLandingAvoidGroundAck =
+      vehicle->flightController->startConfirmLandingSync(timeout);
+  if (forceLandingAvoidGroundAck != ErrorCode::SysCommonErr::Success) {
+    DERROR(
+        "Fail to execute confirm landing avoid ground action! Error code: "
+        "%llx\n ",
+        forceLandingAvoidGroundAck);
+    return false;
+  }
+  if (!checkActionStarted(VehicleStatus::DisplayMode::MODE_AUTO_LANDING)) {
+    return false;
+  } else {
+    while (vehicle->subscribe->getValue<TOPIC_STATUS_DISPLAYMODE>() ==
+               VehicleStatus::DisplayMode::MODE_AUTO_LANDING &&
+           vehicle->subscribe->getValue<TOPIC_STATUS_FLIGHT>() ==
+               VehicleStatus::FlightStatus::IN_AIR) {
+      Platform::instance().taskSleepMs(1000);
+    }
+  }
+  DSTATUS("Finished force Landing and avoid ground action");
+
+  /*! Step 5: Landing finished check*/
+  if (vehicle->subscribe->getValue<TOPIC_STATUS_DISPLAYMODE>() !=
+          VehicleStatus::DisplayMode::MODE_P_GPS ||
+      vehicle->subscribe->getValue<TOPIC_STATUS_DISPLAYMODE>() !=
+          VehicleStatus::DisplayMode::MODE_ATTITUDE) {
+    DSTATUS("Successful landing!");
+  } else {
+    DERROR(
+        "Landing finished, but the aircraft is in an unexpected mode. "
+        "Please connect DJI Assistant.");
+    teardownSubscription(pkgIndex, timeout);
+    return false;
+  }
+  /*! Step 6: Cleanup */
+  teardownSubscription(pkgIndex, timeout);
+  return true;
+}
+
 bool FlightSample::setUpSubscription(int pkgIndex, int freq,
                                      TopicName topicList[], uint8_t topicSize,
                                      int timeout) {

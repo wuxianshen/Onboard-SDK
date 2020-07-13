@@ -151,7 +151,20 @@ Log::print(const char* fmt, ...)
     static unsigned log_cnt = 0;
     if ( log_file.is_open() )
     {
-      log_file << log;
+      if(log[strlen(log)-1]  == ':' &&
+       log[strlen(log)-2]  == ':')
+      {
+        log_file << log;
+      }
+      else
+      {
+        if(log[strlen(log)] != '\n') {
+          log_file << log << std::endl;
+        } else {
+          log_file << log;
+        };
+      }
+
       log_cnt ++;
       if ( log_cnt >= log_flush_time )
       {

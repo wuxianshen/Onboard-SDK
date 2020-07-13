@@ -93,5 +93,9 @@ void localOffsetFromGpsOffset(DJI::OSDK::Vehicle*             vehicle,
 DJI::OSDK::Telemetry::Vector3f toEulerAngle(void* quaternionData);
 bool startGlobalPositionBroadcast(DJI::OSDK::Vehicle* vehicle);
 
+void landByConfirmation(Vehicle* vehicle);
+
+bool localCheckActionStarted(uint8_t mode, Vehicle *vehicle);
+
 
 #endif // DJIOSDK_FLIGHTCONTROL_HPP

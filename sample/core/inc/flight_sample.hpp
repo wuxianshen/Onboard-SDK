@@ -111,6 +111,8 @@ class FlightSample {
    */
   bool goHomeAndConfirmLanding(int timeout = 1);
 
+  bool ConfirmLanding(int timeout);
+
   /*! @brief Sample to move by relative position.
    *
    *  @param vehicle Vehicle pointer

@@ -8,8 +8,8 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 
 # Try to see if user has OpenCV installed
 # if yes, default callback will display the image
-set(OpenCV_CMAKE_DIR "/home/tao/software/install/opencv-2.4.13/")
-find_package( OpenCV 2.4.13 REQUIRED PATHS ${OpenCV_CMAKE_DIR} )
+set(OpenCV_CMAKE_DIR "/home/tao/opencv-2.4.13.6/build/installed/share/OpenCV")
+find_package( OpenCV 2.4.13 REQUIRED PATHS ${OpenCV_CMAKE_DIR})
 if (OpenCV_FOUND)
   message( STATUS "Found OpenCV installed in the system, will use it to display image in AdvancedSensing APIs")
   message( STATUS " - Includes: ${OpenCV_INCLUDE_DIRS}")
